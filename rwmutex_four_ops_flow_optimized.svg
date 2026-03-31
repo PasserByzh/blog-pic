@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 980 980" role="img" aria-labelledby="title desc">
+  <title id="title">Go sync.RWMutex four operations flow</title>
+  <desc id="desc">RLock、RUnlock、Lock、Unlock 四个核心操作的流程概览，采用四宫格布局，避免正文窄宽度下的重叠遮挡。</desc>
+  <defs>
+    <style>
+      .bg { fill: #fcfbf7; }
+      .panel { fill: #f7f3ea; stroke: #d8d0c1; stroke-width: 1.4; }
+      .title { fill: #24211c; font: 600 22px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .panel-title { fill: #2f2b24; font: 600 18px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+      .node-text { fill: #2f2d29; font: 500 14px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-anchor: middle; dominant-baseline: middle; }
+      .sub-text { fill: #655f55; font: 400 11px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; text-anchor: middle; dominant-baseline: middle; }
+      .edge { fill: none; stroke: #7d766a; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .entry { fill: #f1efe8; stroke: #8e877c; }
+      .calc { fill: #fbefd7; stroke: #b98027; }
+      .block { fill: #f9e3de; stroke: #c16048; }
+      .ok { fill: #dff2ea; stroke: #1d8c6a; }
+      .note { fill: #e8f2fb; stroke: #5c8db9; }
+      .legend { fill: #514d45; font: 400 12px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1 L8 5 L1 9" fill="none" stroke="context-stroke" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="980" height="980" rx="22"/>
+  <text class="title" x="490" y="44" text-anchor="middle">RWMutex 四个操作的完整流程</text>
+
+  <rect class="panel" x="36" y="80" width="434" height="360" rx="18"/>
+  <rect class="panel" x="510" y="80" width="434" height="360" rx="18"/>
+  <rect class="panel" x="36" y="462" width="434" height="360" rx="18"/>
+  <rect class="panel" x="510" y="462" width="434" height="360" rx="18"/>
+
+  <text class="panel-title" x="253" y="112" text-anchor="middle">RLock 读锁加锁</text>
+  <text class="panel-title" x="727" y="112" text-anchor="middle">RUnlock 读锁解锁</text>
+  <text class="panel-title" x="253" y="494" text-anchor="middle">Lock 写锁加锁</text>
+  <text class="panel-title" x="727" y="494" text-anchor="middle">Unlock 写锁解锁</text>
+
+  <rect class="entry" x="111" y="136" width="284" height="50" rx="12"/>
+  <text class="node-text" x="253" y="161">调用 RLock()</text>
+  <path class="edge" d="M253 186 L253 212" marker-end="url(#arrow)"/>
+  <rect class="calc" x="111" y="212" width="284" height="68" rx="12"/>
+  <text class="node-text" x="253" y="238">readerCount.Add(1)</text>
+  <text class="sub-text" x="253" y="260">先把自己记成活跃读者</text>
+  <path class="edge" d="M253 280 L253 306" marker-end="url(#arrow)"/>
+  <rect class="note" x="111" y="306" width="284" height="70" rx="12"/>
+  <text class="node-text" x="253" y="332">返回值 &lt; 0 ?</text>
+  <text class="sub-text" x="253" y="354">负数表示已有写者在等待或持锁</text>
+  <path class="edge" d="M253 376 L253 402" marker-end="url(#arrow)"/>
+  <rect class="ok" x="56" y="402" width="170" height="64" rx="12"/>
+  <text class="node-text" x="141" y="426">否：直接获得读锁</text>
+  <text class="sub-text" x="141" y="448">读路径快，只做原子加</text>
+  <rect class="block" x="280" y="402" width="170" height="64" rx="12"/>
+  <text class="node-text" x="365" y="426">是：阻塞到 readerSem</text>
+  <text class="sub-text" x="365" y="448">等待写者释放后被唤醒</text>
+
+  <rect class="entry" x="585" y="136" width="284" height="50" rx="12"/>
+  <text class="node-text" x="727" y="161">调用 RUnlock()</text>
+  <path class="edge" d="M727 186 L727 212" marker-end="url(#arrow)"/>
+  <rect class="calc" x="585" y="212" width="284" height="68" rx="12"/>
+  <text class="node-text" x="727" y="238">readerCount.Add(-1)</text>
+  <text class="sub-text" x="727" y="260">释放一个活跃读者计数</text>
+  <path class="edge" d="M727 280 L727 306" marker-end="url(#arrow)"/>
+  <rect class="note" x="585" y="306" width="284" height="70" rx="12"/>
+  <text class="node-text" x="727" y="332">返回值 &lt; 0 ?</text>
+  <text class="sub-text" x="727" y="354">负数说明此时有写者正在等待</text>
+  <path class="edge" d="M727 376 L727 402" marker-end="url(#arrow)"/>
+  <rect class="ok" x="530" y="402" width="170" height="64" rx="12"/>
+  <text class="node-text" x="615" y="426">否：直接返回</text>
+  <text class="sub-text" x="615" y="448">纯快路径，没有额外唤醒</text>
+  <rect class="block" x="754" y="402" width="170" height="64" rx="12"/>
+  <text class="node-text" x="839" y="426">是：进入 rUnlockSlow</text>
+  <text class="sub-text" x="839" y="448">最后一个旧读者负责唤醒写者</text>
+
+  <rect class="entry" x="111" y="518" width="284" height="50" rx="12"/>
+  <text class="node-text" x="253" y="543">调用 Lock()</text>
+  <path class="edge" d="M253 568 L253 594" marker-end="url(#arrow)"/>
+  <rect class="calc" x="111" y="594" width="284" height="68" rx="12"/>
+  <text class="node-text" x="253" y="620">先获取内部互斥锁 w</text>
+  <text class="sub-text" x="253" y="642">先排斥其他写者，保证写写互斥</text>
+  <path class="edge" d="M253 662 L253 688" marker-end="url(#arrow)"/>
+  <rect class="calc" x="111" y="688" width="284" height="70" rx="12"/>
+  <text class="node-text" x="253" y="714">readerCount -= rwmutexMaxReaders</text>
+  <text class="sub-text" x="253" y="736">把 readerCount 变负，挡住新读者</text>
+  <path class="edge" d="M253 758 L253 784" marker-end="url(#arrow)"/>
+  <rect class="block" x="56" y="784" width="170" height="64" rx="12"/>
+  <text class="node-text" x="141" y="808">还有旧读者</text>
+  <text class="sub-text" x="141" y="830">readerWait 记录剩余数并等待</text>
+  <rect class="ok" x="280" y="784" width="170" height="64" rx="12"/>
+  <text class="node-text" x="365" y="808">没有旧读者</text>
+  <text class="sub-text" x="365" y="830">直接进入临界区写数据</text>
+
+  <rect class="entry" x="585" y="518" width="284" height="50" rx="12"/>
+  <text class="node-text" x="727" y="543">调用 Unlock()</text>
+  <path class="edge" d="M727 568 L727 594" marker-end="url(#arrow)"/>
+  <rect class="calc" x="585" y="594" width="284" height="68" rx="12"/>
+  <text class="node-text" x="727" y="620">readerCount += rwmutexMaxReaders</text>
+  <text class="sub-text" x="727" y="642">恢复为非负，允许新读者进入</text>
+  <path class="edge" d="M727 662 L727 688" marker-end="url(#arrow)"/>
+  <rect class="calc" x="585" y="688" width="284" height="70" rx="12"/>
+  <text class="node-text" x="727" y="714">按阻塞数量唤醒 readerSem</text>
+  <text class="sub-text" x="727" y="736">让写锁期间被挡住的读者继续执行</text>
+  <path class="edge" d="M727 758 L727 784" marker-end="url(#arrow)"/>
+  <rect class="ok" x="585" y="784" width="284" height="64" rx="12"/>
+  <text class="node-text" x="727" y="808">最后释放内部互斥锁 w</text>
+  <text class="sub-text" x="727" y="830">其他写者才可以继续参与竞争</text>
+
+  <rect class="note" x="92" y="864" width="796" height="68" rx="14"/>
+  <text class="node-text" x="490" y="890">核心规律</text>
+  <text class="sub-text" x="490" y="914">读读可并发；写者先抢 w，再把 readerCount 变负挡住新读者，最后等待旧读者全部退出</text>
+
+  <rect class="calc" x="110" y="948" width="12" height="12" rx="3"/>
+  <text class="legend" x="132" y="958">状态更新</text>
+  <rect class="block" x="246" y="948" width="12" height="12" rx="3"/>
+  <text class="legend" x="268" y="958">阻塞等待</text>
+  <rect class="ok" x="376" y="948" width="12" height="12" rx="3"/>
+  <text class="legend" x="398" y="958">成功返回</text>
+  <rect class="entry" x="502" y="948" width="12" height="12" rx="3"/>
+  <text class="legend" x="524" y="958">操作入口</text>
+  <rect class="note" x="640" y="948" width="12" height="12" rx="3"/>
+  <text class="legend" x="662" y="958">判断说明</text>
+</svg>
