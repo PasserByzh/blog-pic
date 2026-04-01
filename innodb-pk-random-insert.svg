@@ -1,0 +1,50 @@
+<svg width="1200" height="260" viewBox="0 0 1200 260" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .title { font: 700 30px Arial, sans-serif; fill: #d62828; }
+    .label { font: 700 16px Arial, sans-serif; fill: #666; }
+    .num { font: 24px Arial, sans-serif; fill: #3b4f63; }
+    .rowtxt { font: 18px Arial, sans-serif; fill: #385723; }
+    .arrow { stroke: #d62828; stroke-width: 4; fill: none; marker-end: url(#arrow); }
+  </style>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#d62828"/>
+    </marker>
+  </defs>
+
+  <text x="500" y="42" class="title">主键乱序插入</text>
+
+  <rect x="10" y="70" width="390" height="120" rx="8" ry="8" fill="#ffe0b2" stroke="#f4a300" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="35" y="90" width="205" height="50" fill="#2db7f5" stroke="#4c6a7f"/>
+  <rect x="35" y="140" width="205" height="35" fill="#a4f49a" stroke="#6b9f63"/>
+  <line x1="103" y1="90" x2="103" y2="175" stroke="#4c6a7f"/>
+  <line x1="171" y1="90" x2="171" y2="175" stroke="#4c6a7f"/>
+  <text x="57" y="123" class="num">1</text><text x="125" y="123" class="num">5</text><text x="193" y="123" class="num">9</text>
+  <text x="50" y="163" class="rowtxt">row</text><text x="118" y="163" class="rowtxt">row</text><text x="186" y="163" class="rowtxt">row</text>
+  <line x1="240" y1="70" x2="240" y2="190" stroke="#f4a300" stroke-dasharray="6 5"/>
+  <text x="165" y="220" class="label">1# page</text>
+
+  <rect x="470" y="70" width="390" height="120" rx="8" ry="8" fill="#ffe0b2" stroke="#f4a300" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="495" y="90" width="235" height="50" fill="#2db7f5" stroke="#4c6a7f"/>
+  <rect x="495" y="140" width="235" height="35" fill="#a4f49a" stroke="#6b9f63"/>
+  <line x1="573" y1="90" x2="573" y2="175" stroke="#4c6a7f"/>
+  <line x1="651" y1="90" x2="651" y2="175" stroke="#4c6a7f"/>
+  <text x="517" y="123" class="num">23</text><text x="595" y="123" class="num">47</text><text x="673" y="123" class="num">50</text>
+  <text x="515" y="163" class="rowtxt">row</text><text x="593" y="163" class="rowtxt">row</text><text x="671" y="163" class="rowtxt">row</text>
+  <line x1="730" y1="70" x2="730" y2="190" stroke="#f4a300" stroke-dasharray="6 5"/>
+  <text x="625" y="220" class="label">3# page</text>
+
+  <rect x="930" y="70" width="250" height="120" rx="8" ry="8" fill="#ffe0b2" stroke="#f4a300" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="955" y="90" width="205" height="50" fill="#2db7f5" stroke="#4c6a7f"/>
+  <rect x="955" y="140" width="205" height="35" fill="#a4f49a" stroke="#6b9f63"/>
+  <line x1="996" y1="90" x2="996" y2="175" stroke="#4c6a7f"/>
+  <line x1="1037" y1="90" x2="1037" y2="175" stroke="#4c6a7f"/>
+  <line x1="1078" y1="90" x2="1078" y2="175" stroke="#4c6a7f"/>
+  <line x1="1119" y1="90" x2="1119" y2="175" stroke="#4c6a7f"/>
+  <text x="963" y="123" class="num">55</text><text x="1004" y="123" class="num">67</text><text x="1045" y="123" class="num">89</text><text x="1083" y="123" class="num">101</text><text x="1130" y="123" class="num">107</text>
+  <text x="958" y="163" class="rowtxt">row</text><text x="999" y="163" class="rowtxt">row</text><text x="1040" y="163" class="rowtxt">row</text><text x="1085" y="163" class="rowtxt">row</text><text x="1128" y="163" class="rowtxt">row</text>
+  <text x="1035" y="220" class="label">2# page</text>
+
+  <path d="M400 130 L465 130" class="arrow"/>
+  <path d="M860 130 L925 130" class="arrow"/>
+</svg>
